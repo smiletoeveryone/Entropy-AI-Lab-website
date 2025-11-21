@@ -1,0 +1,449 @@
+/* Contact Info Styling */
+.contact-info {
+    margin: var(--spacing-md) 0;
+}
+
+.contact-email {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 0.75rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: var(--transition-base);
+}
+
+.contact-email:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.email-icon {
+    font-size: 1.5rem;
+}
+
+.contact-email a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.contact-email a:hover {
+    color: var(--white);
+    text-decoration: underline;
+}
+
+/* Adjust navbar shadow on scroll for dark theme */
+.navbar.scrolled {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    border-bottom-color: rgba(129, 140, 248, 0.2);
+}
+
+/* Update benefit item border for dark theme */
+.benefit-item {
+    background: rgba(129, 140, 248, 0.05);
+    padding: var(--spacing-sm);
+    border-radius: 0.5rem;
+    border-left: 3px solid var(--primary-color);
+}
+
+/* Update pipeline stage background for dark theme visibility */
+.pipeline-stage {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+    color: var(--white);
+    border-radius: 0.5rem;
+    text-align: center;
+    min-width: 200px;
+    box-shadow: 0 4px 15px rgba(129, 140, 248, 0.4);
+    animation: slideIn 1s ease forwards;
+    opacity: 0;
+}
+
+.pipeline-stage.stage-4 {
+    animation-delay: 0.8s;
+    background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
+}
+
+/* Enhanced glow effects for dark theme */
+.data-node {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    box-shadow: 0 0 40px rgba(129, 140, 248, 0.6);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+/* Update central hub for better visibility */
+.central-hub {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 50px rgba(129, 140, 248, 0.7);
+    z-index: 2;
+}
+
+/* Footer links hover in dark theme */
+.footer-column a:hover {
+    color: var(--primary-light);
+    text-decoration: underline;
+}
+
+/* Enhanced button styles for dark theme */
+.btn-primary {
+    background: var(--gradient-primary);
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(129, 140, 248, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(129, 140, 248, 0.6);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--primary-light);
+    border-color: var(--primary-light);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(129, 140, 248, 0.4);
+}
+
+/* CTA section buttons for dark theme background */
+.cta-section .btn-primary {
+    background: var(--white);
+    color: var(--primary-color);
+}
+
+.cta-section .btn-primary:hover {
+    background: var(--white);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(255, 255, 255, 0.3);
+}
+
+.cta-section .btn-secondary {
+    border-color: var(--white);
+    color: var(--white);
+}
+
+.cta-section .btn-secondary:hover {
+    background: var(--white);
+    color: var(--primary-color);
+}
+
+/* ===============================================
+   QUALITY SIMULATION SECTION
+   =============================================== */
+
+.quality-simulation {
+    background: var(--dark-bg);
+    padding: var(--spacing-xl) 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.quality-simulation::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(129, 140, 248, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.simulation-showcase {
+    position: relative;
+    z-index: 1;
+}
+
+.simulation-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    align-items: center;
+}
+
+.simulation-description h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: var(--spacing-sm);
+}
+
+.simulation-description > p {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: var(--spacing-md);
+}
+
+.simulation-features {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.sim-feature {
+    display: flex;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--card-bg);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+    transition: var(--transition-base);
+}
+
+.sim-feature:hover {
+    background: var(--card-hover-bg);
+    border-color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.sim-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.sim-text h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 0.25rem;
+}
+
+.sim-text p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Simulation Dashboard Visual */
+.simulation-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sim-dashboard {
+    width: 100%;
+    max-width: 500px;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 1rem;
+    padding: var(--spacing-md);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.dashboard-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: var(--white);
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.dashboard-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.metric-card {
+    background: rgba(129, 140, 248, 0.05);
+    padding: var(--spacing-sm);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-label {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.25rem;
+}
+
+.metric-trend {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #10b981;
+}
+
+.metric-trend:contains("↓") {
+    color: #ef4444;
+}
+
+.dashboard-graph {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 120px;
+    gap: 0.5rem;
+    padding: var(--spacing-sm);
+    background: rgba(129, 140, 248, 0.03);
+    border-radius: 0.5rem;
+}
+
+.graph-bar {
+    flex: 1;
+    background: var(--gradient-primary);
+    border-radius: 0.25rem 0.25rem 0 0;
+    transition: var(--transition-base);
+    animation: growBar 1s ease-out forwards;
+}
+
+@keyframes growBar {
+    from {
+        transform: scaleY(0);
+    }
+    to {
+        transform: scaleY(1);
+    }
+}
+
+.graph-bar:hover {
+    opacity: 0.8;
+    transform: scaleY(1.05);
+}
+
+/* Simulation Benefits */
+.simulation-benefits {
+    margin-top: var(--spacing-lg);
+}
+
+.simulation-benefits h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.benefit-box {
+    background: var(--card-bg);
+    padding: var(--spacing-md);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    transition: var(--transition-base);
+}
+
+.benefit-box:hover {
+    background: var(--card-hover-bg);
+    border-color: var(--primary-color);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(129, 140, 248, 0.3);
+}
+
+.benefit-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: var(--spacing-sm);
+}
+
+.benefit-box h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+}
+
+.benefit-box p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+/* Service Highlight */
+.service-highlight {
+    position: relative;
+    border: 2px solid var(--primary-color);
+}
+
+.service-highlight::before {
+    content: 'NEW';
+    position: absolute;
+    top: -12px;
+    right: var(--spacing-sm);
+    background: var(--gradient-primary);
+    color: var(--white);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+/* Responsive Design for Simulation Section */
+@media (max-width: 968px) {
+    .simulation-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-metrics {
+        grid-template-columns: 1fr;
+    }
+    
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
