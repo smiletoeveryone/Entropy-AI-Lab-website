@@ -1,3 +1,582 @@
+/* ===============================================
+   LIVE DATA METRICS IN HERO
+   =============================================== */
+
+.data-metrics-live {
+    display: flex;
+    gap: 2rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.live-metric {
+    background: rgba(21, 25, 35, 0.8);
+    border: 1px solid rgba(129, 140, 248, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    min-width: 180px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.live-metric::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    animation: scanLine 3s ease-in-out infinite;
+}
+
+@keyframes scanLine {
+    0%, 100% { left: -100%; }
+    50% { left: 100%; }
+}
+
+.metric-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.metric-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0.5rem 0;
+    font-family: 'Courier New', monospace;
+}
+
+.metric-suffix {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+}
+
+.metric-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ===============================================
+   DATA PIPELINE VISUALIZATION
+   =============================================== */
+
+.data-pipeline-viz {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4rem 0;
+    padding: 3rem;
+    background: rgba(21, 25, 35, 0.6);
+    border-radius: 20px;
+    border: 1px solid rgba(129, 140, 248, 0.2);
+    overflow-x: auto;
+    gap: 1rem;
+}
+
+.pipeline-stage {
+    position: relative;
+    background: rgba(21, 25, 35, 0.9);
+    border: 2px solid rgba(129, 140, 248, 0.3);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    min-width: 150px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.pipeline-stage:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 30px rgba(129, 140, 248, 0.3);
+}
+
+.stage-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+.pipeline-stage[data-stage="1"] .stage-icon { animation-delay: 0s; }
+.pipeline-stage[data-stage="2"] .stage-icon { animation-delay: 0.2s; }
+.pipeline-stage[data-stage="3"] .stage-icon { animation-delay: 0.4s; }
+.pipeline-stage[data-stage="4"] .stage-icon { animation-delay: 0.6s; }
+.pipeline-stage[data-stage="5"] .stage-icon { animation-delay: 0.8s; }
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.stage-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.stage-flow {
+    height: 4px;
+    background: rgba(129, 140, 248, 0.2);
+    border-radius: 2px;
+    margin-top: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.stage-flow::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    animation: flowPulse 2s ease-in-out infinite;
+}
+
+.pipeline-stage[data-stage="1"] .stage-flow::after { animation-delay: 0s; }
+.pipeline-stage[data-stage="2"] .stage-flow::after { animation-delay: 0.4s; }
+.pipeline-stage[data-stage="3"] .stage-flow::after { animation-delay: 0.8s; }
+.pipeline-stage[data-stage="4"] .stage-flow::after { animation-delay: 1.2s; }
+.pipeline-stage[data-stage="5"] .stage-flow::after { animation-delay: 1.6s; }
+
+@keyframes flowPulse {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.data-packet {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px var(--primary-color);
+    animation: packetPulse 1s ease-in-out infinite;
+}
+
+@keyframes packetPulse {
+    0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+    50% { opacity: 0.5; transform: translateX(-50%) scale(1.5); }
+}
+
+.pipeline-arrow {
+    font-size: 2rem;
+    color: var(--primary-color);
+    animation: arrowBlink 1.5s ease-in-out infinite;
+}
+
+@keyframes arrowBlink {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* ===============================================
+   DATA FLOW NETWORK DIAGRAM
+   =============================================== */
+
+.data-flow-network {
+    position: relative;
+    height: 300px;
+    margin: 3rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.network-center {
+    position: relative;
+    z-index: 2;
+}
+
+.data-core {
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.3), rgba(129, 140, 248, 0.1));
+    border: 3px solid var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    animation: coreGlow 3s ease-in-out infinite;
+    box-shadow: 0 0 40px rgba(129, 140, 248, 0.4);
+}
+
+@keyframes coreGlow {
+    0%, 100% { box-shadow: 0 0 40px rgba(129, 140, 248, 0.4); }
+    50% { box-shadow: 0 0 60px rgba(129, 140, 248, 0.8); }
+}
+
+.core-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.core-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.network-paths {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.data-path {
+    position: absolute;
+    width: 300px;
+    height: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.path-left {
+    left: 0;
+    transform-origin: right;
+}
+
+.path-right {
+    right: 0;
+    transform-origin: left;
+}
+
+.path-line {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        rgba(129, 140, 248, 0.1), 
+        rgba(129, 140, 248, 0.6), 
+        rgba(129, 140, 248, 0.1));
+}
+
+.data-flow-indicator {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 20px var(--primary-color);
+    animation: flowIndicator 3s ease-in-out infinite;
+}
+
+.path-left .data-flow-indicator {
+    left: 0;
+}
+
+.path-right .data-flow-indicator {
+    right: 0;
+}
+
+@keyframes flowIndicator {
+    0%, 100% { opacity: 0; transform: translateY(-50%) translateX(0); }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+}
+
+.path-left .data-flow-indicator {
+    animation: flowLeft 3s ease-in-out infinite;
+}
+
+.path-right .data-flow-indicator {
+    animation: flowRight 3s ease-in-out infinite;
+}
+
+@keyframes flowLeft {
+    0% { left: 0; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: calc(100% - 90px); opacity: 0; }
+}
+
+@keyframes flowRight {
+    0% { right: 0; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { right: calc(100% - 90px); opacity: 0; }
+}
+
+/* ===============================================
+   REAL-TIME DATA VISUALIZATION
+   =============================================== */
+
+.realtime-data-viz {
+    background: rgba(21, 25, 35, 0.8);
+    border: 1px solid rgba(129, 140, 248, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 3rem 0;
+}
+
+.viz-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.status-indicator {
+    font-size: 0.8rem;
+    animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.status-text {
+    font-weight: 600;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+.data-chart {
+    width: 100%;
+    height: 250px;
+    border-radius: 8px;
+}
+
+/* ===============================================
+   RESPONSIVE DESIGN FOR DATA VISUALIZATIONS
+   =============================================== */
+
+@media (max-width: 768px) {
+    .data-metrics-live {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .live-metric {
+        width: 100%;
+    }
+    
+    .data-pipeline-viz {
+        flex-direction: column;
+        padding: 2rem 1rem;
+    }
+    
+    .pipeline-arrow {
+        transform: rotate(90deg);
+        margin: 1rem 0;
+    }
+    
+    .data-flow-network {
+        height: 400px;
+    }
+    
+    .data-path {
+        width: 2px;
+        height: 150px;
+    }
+    
+    .path-left {
+        left: 50%;
+        top: 0;
+        transform: translateX(-50%) rotate(90deg);
+    }
+    
+    .path-right {
+        right: auto;
+        left: 50%;
+        bottom: 0;
+        top: auto;
+        transform: translateX(-50%) rotate(90deg);
+    }
+}
+
+/* ===============================================
+   DATA FLOWING EFFECTS
+   =============================================== */
+
+/* Particle Canvas */
+.particle-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Data Stream Background */
+.data-stream-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.stream-line {
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, 
+        transparent 0%, 
+        rgba(129, 140, 248, 0.3) 50%, 
+        transparent 100%);
+    opacity: 0;
+    animation: streamFlow 4s ease-in-out infinite;
+}
+
+.stream-line.stream-1 {
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.stream-line.stream-2 {
+    left: 35%;
+    animation-delay: 1s;
+}
+
+.stream-line.stream-3 {
+    right: 35%;
+    animation-delay: 2s;
+}
+
+.stream-line.stream-4 {
+    right: 10%;
+    animation-delay: 3s;
+}
+
+@keyframes streamFlow {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.6;
+    }
+    90% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+/* Floating Data Particles */
+.floating-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(129, 140, 248, 0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: floatParticle 6s ease-in-out infinite;
+}
+
+@keyframes floatParticle {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    50% {
+        transform: translate(50px, -100px) scale(1.5);
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(100px, -200px) scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* Pulse Effect for Data Nodes */
+.data-node::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(129, 140, 248, 0.3);
+    animation: pulseRing 2s ease-out infinite;
+}
+
+@keyframes pulseRing {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+/* Binary Rain Effect */
+.binary-rain {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.binary-digit {
+    position: absolute;
+    color: rgba(129, 140, 248, 0.2);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    animation: fallDown linear infinite;
+}
+
+@keyframes fallDown {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+
 /* Contact Info Styling */
 .contact-info {
     margin: var(--spacing-md) 0;

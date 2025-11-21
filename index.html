@@ -35,6 +35,7 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <canvas id="particleCanvas" class="particle-canvas"></canvas>
         <div class="hero-background"></div>
         <div class="container">
             <div class="hero-content">
@@ -47,6 +48,26 @@
                     High-quality raw data powers everything we do, from training cutting-edge models 
                     to delivering precise AI-generated insights.
                 </p>
+                
+                <!-- Live Data Metrics -->
+                <div class="data-metrics-live">
+                    <div class="live-metric">
+                        <span class="metric-icon">📊</span>
+                        <span class="metric-value" data-target="1000000">0</span>
+                        <span class="metric-label">Data Points Processed</span>
+                    </div>
+                    <div class="live-metric">
+                        <span class="metric-icon">⚡</span>
+                        <span class="metric-value" data-target="99.9">0</span><span class="metric-suffix">%</span>
+                        <span class="metric-label">Data Quality Score</span>
+                    </div>
+                    <div class="live-metric">
+                        <span class="metric-icon">🔄</span>
+                        <span class="metric-value" data-target="24">0</span><span class="metric-suffix">/7</span>
+                        <span class="metric-label">Real-time Processing</span>
+                    </div>
+                </div>
+                
                 <div class="hero-cta">
                     <a href="#approach" class="btn btn-primary">Discover Our Approach</a>
                     <a href="#contact" class="btn btn-secondary">Get in Touch</a>
@@ -114,6 +135,44 @@
     <!-- Data Quality Section -->
     <section class="data-quality">
         <div class="container">
+            <!-- Animated Data Pipeline Visualization -->
+            <div class="data-pipeline-viz">
+                <div class="pipeline-stage" data-stage="1">
+                    <div class="stage-icon">📥</div>
+                    <div class="stage-title">Data Ingestion</div>
+                    <div class="stage-flow"></div>
+                    <div class="data-packet"></div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-stage" data-stage="2">
+                    <div class="stage-icon">🔍</div>
+                    <div class="stage-title">Validation</div>
+                    <div class="stage-flow"></div>
+                    <div class="data-packet"></div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-stage" data-stage="3">
+                    <div class="stage-icon">⚙️</div>
+                    <div class="stage-title">Processing</div>
+                    <div class="stage-flow"></div>
+                    <div class="data-packet"></div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-stage" data-stage="4">
+                    <div class="stage-icon">💾</div>
+                    <div class="stage-title">Storage</div>
+                    <div class="stage-flow"></div>
+                    <div class="data-packet"></div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-stage" data-stage="5">
+                    <div class="stage-icon">🚀</div>
+                    <div class="stage-title">Deployment</div>
+                    <div class="stage-flow"></div>
+                    <div class="data-packet"></div>
+                </div>
+            </div>
+            
             <div class="quality-content">
                 <div class="quality-text">
                     <span class="section-tag">Foundation</span>
@@ -192,6 +251,26 @@
                     Our meticulously managed data infrastructure powers two distinct, high-value pathways, 
                     delivering unmatched versatility and performance.
                 </p>
+            </div>
+            
+            <!-- Data Flow Network Diagram -->
+            <div class="data-flow-network">
+                <div class="network-center">
+                    <div class="data-core">
+                        <span class="core-icon">🎯</span>
+                        <span class="core-label">High-Quality<br>Raw Data</span>
+                    </div>
+                </div>
+                <div class="network-paths">
+                    <div class="data-path path-left">
+                        <div class="path-line"></div>
+                        <div class="data-flow-indicator"></div>
+                    </div>
+                    <div class="data-path path-right">
+                        <div class="path-line"></div>
+                        <div class="data-flow-indicator"></div>
+                    </div>
+                </div>
             </div>
             
             <div class="strategy-pathways">
@@ -320,6 +399,12 @@
 
     <!-- Quality Simulation Section -->
     <section class="quality-simulation">
+        <div class="data-stream-bg">
+            <div class="stream-line stream-1"></div>
+            <div class="stream-line stream-2"></div>
+            <div class="stream-line stream-3"></div>
+            <div class="stream-line stream-4"></div>
+        </div>
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">Innovative Service</span>
@@ -328,6 +413,15 @@
                     Leverage our high-quality data to create realistic simulations that test, validate, 
                     and optimize your systems before deployment.
                 </p>
+            </div>
+            
+            <!-- Real-time Data Visualization -->
+            <div class="realtime-data-viz">
+                <div class="viz-header">
+                    <span class="status-indicator">🟢</span>
+                    <span class="status-text">Live Data Stream</span>
+                </div>
+                <canvas id="dataFlowChart" class="data-chart"></canvas>
             </div>
             
             <div class="simulation-showcase">

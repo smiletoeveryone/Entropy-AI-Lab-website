@@ -341,6 +341,455 @@ class CursorTrail {
 // new CursorTrail();
 
 // ===============================================
+// LIVE METRICS ANIMATION
+// ===============================================
+
+function animateLiveMetrics() {
+    const metricValues = document.querySelectorAll('.data-metrics-live .metric-value');
+    
+    metricValues.forEach(valueEl => {
+        const target = parseFloat(valueEl.getAttribute('data-target'));
+        const duration = 2000; // 2 seconds
+        const increment = target / (duration / 16);
+        let current = 0;
+        
+        const updateValue = () => {
+            current += increment;
+            if (current < target) {
+                if (target > 1000) {
+                    valueEl.textContent = Math.floor(current).toLocaleString();
+                } else {
+                    valueEl.textContent = current.toFixed(1);
+                }
+                requestAnimationFrame(updateValue);
+            } else {
+                if (target > 1000) {
+                    valueEl.textContent = target.toLocaleString();
+                } else {
+                    valueEl.textContent = target.toFixed(1);
+                }
+            }
+        };
+        
+        updateValue();
+    });
+}
+
+// Trigger animation when hero section is visible
+const heroSection = document.querySelector('.hero');
+if (heroSection) {
+    const heroObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateLiveMetrics();
+                heroObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+    
+    heroObserver.observe(heroSection);
+}
+
+// ===============================================
+// REAL-TIME DATA FLOW CHART
+// ===============================================
+
+class DataFlowChart {
+    constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        if (!this.canvas) return;
+        
+        this.ctx = this.canvas.getContext('2d');
+        this.dataPoints = [];
+        this.maxPoints = 50;
+        this.time = 0;
+        
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        this.animate();
+    }
+    
+    resize() {
+        this.canvas.width = this.canvas.offsetWidth;
+        this.canvas.height = this.canvas.offsetHeight;
+    }
+    
+    generateDataPoint() {
+        // Simulate real-time data with sine wave + random noise
+        const baseValue = Math.sin(this.time * 0.05) * 30 + 50;
+        const noise = (Math.random() - 0.5) * 20;
+        return Math.max(10, Math.min(90, baseValue + noise));
+    }
+    
+    animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Add new data point
+        if (this.dataPoints.length >= this.maxPoints) {
+            this.dataPoints.shift();
+        }
+        this.dataPoints.push(this.generateDataPoint());
+        this.time++;
+        
+        // Draw grid
+        this.drawGrid();
+        
+        // Draw data line
+        this.drawDataLine();
+        
+        // Draw glow effect
+        this.drawGlow();
+        
+        requestAnimationFrame(() => this.animate());
+    }
+    
+    drawGrid() {
+        const gridColor = 'rgba(129, 140, 248, 0.1)';
+        const gridSpacing = 40;
+        
+        this.ctx.strokeStyle = gridColor;
+        this.ctx.lineWidth = 1;
+        
+        // Horizontal lines
+        for (let y = 0; y < this.canvas.height; y += gridSpacing) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, y);
+            this.ctx.lineTo(this.canvas.width, y);
+            this.ctx.stroke();
+        }
+        
+        // Vertical lines
+        for (let x = 0; x < this.canvas.width; x += gridSpacing) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, 0);
+            this.ctx.lineTo(x, this.canvas.height);
+            this.ctx.stroke();
+        }
+    }
+    
+    drawDataLine() {
+        if (this.dataPoints.length < 2) return;
+        
+        const xStep = this.canvas.width / (this.maxPoints - 1);
+        
+        // Draw line
+        this.ctx.strokeStyle = 'rgba(129, 140, 248, 0.8)';
+        this.ctx.lineWidth = 2;
+        this.ctx.beginPath();
+        
+        this.dataPoints.forEach((value, index) => {
+            const x = index * xStep;
+            const y = this.canvas.height - (value / 100 * this.canvas.height);
+            
+            if (index === 0) {
+                this.ctx.moveTo(x, y);
+            } else {
+                this.ctx.lineTo(x, y);
+            }
+        });
+        
+        this.ctx.stroke();
+        
+        // Draw area fill
+        this.ctx.lineTo(this.canvas.width, this.canvas.height);
+        this.ctx.lineTo(0, this.canvas.height);
+        this.ctx.closePath();
+        
+        const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+        gradient.addColorStop(0, 'rgba(129, 140, 248, 0.3)');
+        gradient.addColorStop(1, 'rgba(129, 140, 248, 0.05)');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fill();
+    }
+    
+    drawGlow() {
+        if (this.dataPoints.length === 0) return;
+        
+        const lastValue = this.dataPoints[this.dataPoints.length - 1];
+        const x = this.canvas.width;
+        const y = this.canvas.height - (lastValue / 100 * this.canvas.height);
+        
+        // Draw glowing point
+        this.ctx.shadowBlur = 20;
+        this.ctx.shadowColor = 'rgba(129, 140, 248, 0.8)';
+        this.ctx.fillStyle = 'rgba(129, 140, 248, 1)';
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, 5, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.shadowBlur = 0;
+    }
+}
+
+// Initialize chart when visible
+const chartCanvas = document.getElementById('dataFlowChart');
+if (chartCanvas) {
+    const chartObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                new DataFlowChart('dataFlowChart');
+                chartObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+    
+    chartObserver.observe(chartCanvas);
+}
+
+// ===============================================
+// PARTICLE ANIMATION SYSTEM
+// ===============================================
+
+class ParticleSystem {
+    constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        if (!this.canvas) return;
+        
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.particleCount = 80;
+        this.connectionDistance = 150;
+        this.mouse = { x: null, y: null, radius: 150 };
+        
+        this.init();
+    }
+    
+    init() {
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        
+        // Track mouse movement
+        this.canvas.addEventListener('mousemove', (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            this.mouse.x = e.clientX - rect.left;
+            this.mouse.y = e.clientY - rect.top;
+        });
+        
+        this.canvas.addEventListener('mouseleave', () => {
+            this.mouse.x = null;
+            this.mouse.y = null;
+        });
+        
+        // Create particles
+        for (let i = 0; i < this.particleCount; i++) {
+            this.particles.push(new Particle(this.canvas.width, this.canvas.height));
+        }
+        
+        this.animate();
+    }
+    
+    resize() {
+        this.canvas.width = this.canvas.offsetWidth;
+        this.canvas.height = this.canvas.offsetHeight;
+    }
+    
+    animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Update and draw particles
+        this.particles.forEach(particle => {
+            particle.update(this.canvas.width, this.canvas.height, this.mouse);
+            particle.draw(this.ctx);
+        });
+        
+        // Draw connections
+        this.drawConnections();
+        
+        requestAnimationFrame(() => this.animate());
+    }
+    
+    drawConnections() {
+        for (let i = 0; i < this.particles.length; i++) {
+            for (let j = i + 1; j < this.particles.length; j++) {
+                const dx = this.particles[i].x - this.particles[j].x;
+                const dy = this.particles[i].y - this.particles[j].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < this.connectionDistance) {
+                    const opacity = 1 - (distance / this.connectionDistance);
+                    this.ctx.strokeStyle = `rgba(129, 140, 248, ${opacity * 0.2})`;
+                    this.ctx.lineWidth = 1;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+                    this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+                    this.ctx.stroke();
+                }
+            }
+        }
+    }
+}
+
+class Particle {
+    constructor(canvasWidth, canvasHeight) {
+        this.x = Math.random() * canvasWidth;
+        this.y = Math.random() * canvasHeight;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.radius = Math.random() * 2 + 1;
+        this.originalRadius = this.radius;
+    }
+    
+    update(width, height, mouse) {
+        // Boundary check
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+        
+        // Mouse interaction
+        if (mouse.x !== null && mouse.y !== null) {
+            const dx = mouse.x - this.x;
+            const dy = mouse.y - this.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < mouse.radius) {
+                const force = (mouse.radius - distance) / mouse.radius;
+                const angle = Math.atan2(dy, dx);
+                this.vx -= Math.cos(angle) * force * 0.2;
+                this.vy -= Math.sin(angle) * force * 0.2;
+                this.radius = this.originalRadius * (1 + force);
+            } else {
+                this.radius = this.originalRadius;
+            }
+        }
+        
+        this.x += this.vx;
+        this.y += this.vy;
+        
+        // Friction
+        this.vx *= 0.99;
+        this.vy *= 0.99;
+    }
+    
+    draw(ctx) {
+        ctx.fillStyle = 'rgba(129, 140, 248, 0.8)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Glow effect
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = 'rgba(129, 140, 248, 0.5)';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+}
+
+// Initialize particle system
+if (document.getElementById('particleCanvas')) {
+    const particleSystem = new ParticleSystem('particleCanvas');
+}
+
+// ===============================================
+// BINARY RAIN EFFECT
+// ===============================================
+
+function createBinaryRain() {
+    const sections = document.querySelectorAll('.dual-strategy, .services');
+    
+    sections.forEach(section => {
+        const rainContainer = document.createElement('div');
+        rainContainer.className = 'binary-rain';
+        section.style.position = 'relative';
+        section.insertBefore(rainContainer, section.firstChild);
+        
+        // Create falling binary digits
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                const digit = document.createElement('div');
+                digit.className = 'binary-digit';
+                digit.textContent = Math.random() > 0.5 ? '1' : '0';
+                digit.style.left = Math.random() * 100 + '%';
+                digit.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                rainContainer.appendChild(digit);
+                
+                setTimeout(() => digit.remove(), 5000);
+            }
+        }, 200);
+    });
+}
+
+// Initialize binary rain
+createBinaryRain();
+
+// ===============================================
+// FLOATING DATA PARTICLES
+// ===============================================
+
+function createFloatingParticles() {
+    const heroSection = document.querySelector('.hero');
+    if (!heroSection) return;
+    
+    setInterval(() => {
+        const particle = document.createElement('div');
+        particle.className = 'floating-particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = '100%';
+        particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+        particle.style.animationDelay = Math.random() * 2 + 's';
+        heroSection.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 8000);
+    }, 500);
+}
+
+// Initialize floating particles
+createFloatingParticles();
+
+// ===============================================
+// DATA FLOW LINES IN DASHBOARD
+// ===============================================
+
+function animateDashboardDataFlow() {
+    const dashboard = document.querySelector('.sim-dashboard');
+    if (!dashboard) return;
+    
+    setInterval(() => {
+        const dataPoint = document.createElement('div');
+        dataPoint.style.cssText = `
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(129, 140, 248, 0.8);
+            border-radius: 50%;
+            top: ${Math.random() * 100}%;
+            left: 0;
+            pointer-events: none;
+            animation: flowRight 2s ease-in-out forwards;
+        `;
+        dashboard.style.position = 'relative';
+        dashboard.style.overflow = 'hidden';
+        dashboard.appendChild(dataPoint);
+        
+        setTimeout(() => dataPoint.remove(), 2000);
+    }, 300);
+}
+
+// Add flow animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes flowRight {
+        0% { transform: translateX(0); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateX(500px); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+
+// Initialize dashboard data flow
+const dashboardObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateDashboardDataFlow();
+            dashboardObserver.unobserve(entry.target);
+        }
+    });
+});
+
+const simDashboard = document.querySelector('.sim-dashboard');
+if (simDashboard) {
+    dashboardObserver.observe(simDashboard);
+}
+
+// ===============================================
 // CONSOLE MESSAGE
 // ===============================================
 
