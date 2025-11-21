@@ -43,18 +43,24 @@
     margin-bottom: 0.5rem;
 }
 
-.metric-value {
+.metric-display {
     display: block;
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--primary-color);
     margin: 0.5rem 0;
-    font-family: 'Courier New', monospace;
+    line-height: 1.2;
+    min-height: 2.4rem;
 }
 
+.metric-value,
 .metric-suffix {
-    font-size: 1.2rem;
-    color: var(--text-secondary);
+    display: inline;
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    color: var(--primary-color) !important;
+    font-family: 'Inter', sans-serif !important;
+    line-height: 1.2;
+    vertical-align: baseline;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
 }
 
 .metric-label {
@@ -63,6 +69,7 @@
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 1px;
+    margin-top: 0.5rem;
 }
 
 /* ===============================================

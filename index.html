@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entropy AI Lab - Data-First AI Solutions</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="dark-theme-additions.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+    <link rel="stylesheet" href="styles.css?v=2">
+    <link rel="stylesheet" href="dark-theme-additions.css?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -53,17 +54,23 @@
                 <div class="data-metrics-live">
                     <div class="live-metric">
                         <span class="metric-icon">📊</span>
-                        <span class="metric-value" data-target="1000000">0</span>
+                        <div class="metric-display">
+                            <span class="metric-value" data-target="1000000">0</span>
+                        </div>
                         <span class="metric-label">Data Points Processed</span>
                     </div>
                     <div class="live-metric">
                         <span class="metric-icon">⚡</span>
-                        <span class="metric-value" data-target="99.9">0</span><span class="metric-suffix">%</span>
+                        <div class="metric-display">
+                            <span class="metric-value" data-target="99.9">0</span><span class="metric-suffix">%</span>
+                        </div>
                         <span class="metric-label">Data Quality Score</span>
                     </div>
                     <div class="live-metric">
                         <span class="metric-icon">🔄</span>
-                        <span class="metric-value" data-target="24">0</span><span class="metric-suffix">/7</span>
+                        <div class="metric-display">
+                            <span class="metric-value" data-target="24"></span><span class="metric-suffix">/7</span>
+                        </div>
                         <span class="metric-label">Real-time Processing</span>
                     </div>
                 </div>
@@ -673,6 +680,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
 </body>
 </html>

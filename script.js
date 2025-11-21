@@ -358,6 +358,9 @@ function animateLiveMetrics() {
             if (current < target) {
                 if (target > 1000) {
                     valueEl.textContent = Math.floor(current).toLocaleString();
+                } else if (target === 24) {
+                    // For the 24/7 metric, show whole number without decimal
+                    valueEl.textContent = Math.floor(current);
                 } else {
                     valueEl.textContent = current.toFixed(1);
                 }
@@ -365,6 +368,9 @@ function animateLiveMetrics() {
             } else {
                 if (target > 1000) {
                     valueEl.textContent = target.toLocaleString();
+                } else if (target === 24) {
+                    // For the 24/7 metric, show whole number without decimal
+                    valueEl.textContent = Math.floor(target);
                 } else {
                     valueEl.textContent = target.toFixed(1);
                 }
