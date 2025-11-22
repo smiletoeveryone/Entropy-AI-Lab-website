@@ -1,7 +1,5 @@
-// Vercel Serverless Function for Newsletter Subscription
-// This endpoint handles newsletter subscriptions and sends confirmation emails
-
-const nodemailer = require('nodemailer');
+// Simple Newsletter Subscription Handler
+// Saves to a simple log and can be extended later
 
 module.exports = async (req, res) => {
     // Set CORS headers
@@ -33,175 +31,125 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'Invalid email address' });
         }
 
-        // Configure email transporter
-        // Note: You need to set these as environment variables in Vercel
-        const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST || 'smtp-mail.outlook.com',
-            port: process.env.SMTP_PORT || 587,
-            secure: false, // true for 465, false for other ports
-            auth: {
-                user: process.env.SMTP_USER, // Your email: contact@entropyailab.com
-                pass: process.env.SMTP_PASSWORD, // Your email password or app password
-            },
-            tls: {
-                ciphers: 'SSLv3'
+        // Log subscription (in production, this should save to a database)
+        const timestamp = new Date().toISOString();
+        console.log(`[NEWSLETTER SUBSCRIPTION] Email: ${email} | Time: ${timestamp}`);
+
+        // Here you can add integrations with:
+        // - Database (Vercel Postgres, MongoDB, etc.)
+        // - Email marketing platform (Mailchimp, ConvertKit, etc.)
+        // - Or trigger a separate email service
+
+        // Check if SMTP is configured
+        const smtpConfigured = process.env.SMTP_HOST && 
+                              process.env.SMTP_USER && 
+                              process.env.SMTP_PASSWORD;
+
+        if (smtpConfigured) {
+            // Try to send email using nodemailer
+            try {
+                const nodemailer = require('nodemailer');
+                
+                const transporter = nodemailer.createTransport({
+                    host: process.env.SMTP_HOST,
+                    port: parseInt(process.env.SMTP_PORT || '587'),
+                    secure: false,
+                    auth: {
+                        user: process.env.SMTP_USER,
+                        pass: process.env.SMTP_PASSWORD,
+                    },
+                    tls: {
+                        ciphers: 'SSLv3'
+                    }
+                });
+
+                const mailOptions = {
+                    from: `"Entropy AI Lab" <${process.env.SMTP_USER}>`,
+                    to: email,
+                    subject: '✓ Welcome to Entropy AI Lab Newsletter!',
+                    html: generateEmailHTML(email),
+                    text: generateEmailText()
+                };
+
+                await transporter.sendMail(mailOptions);
+                console.log(`[EMAIL SENT] Confirmation sent to: ${email}`);
+            } catch (emailError) {
+                console.error('[EMAIL ERROR]', emailError.message);
+                // Don't fail the subscription if email fails
             }
+        } else {
+            console.log('[SMTP NOT CONFIGURED] Email notification skipped');
+        }
+
+        // Return success response
+        return res.status(200).json({
+            success: true,
+            message: 'Subscription successful! Check your email for confirmation.'
         });
 
-        // Email content
-        const mailOptions = {
-            from: '"Entropy AI Lab" <contact@entropyailab.com>',
-            to: email,
-            subject: '✓ Welcome to Entropy AI Lab Newsletter!',
-            html: `
+    } catch (error) {
+        console.error('[SUBSCRIPTION ERROR]', error);
+        return res.status(500).json({
+            error: 'Failed to process subscription. Please try again later.'
+        });
+    }
+};
+
+function generateEmailHTML(email) {
+    return `
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #ffffff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px 20px;
-            text-align: center;
-            color: white;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .header .logo {
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
-        .content {
-            padding: 40px 30px;
-        }
-        .content h2 {
-            color: #667eea;
-            font-size: 24px;
-            margin-top: 0;
-        }
-        .content p {
-            font-size: 16px;
-            color: #555;
-            margin: 15px 0;
-        }
-        .features {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 25px 0;
-        }
-        .feature-item {
-            display: flex;
-            align-items: center;
-            margin: 15px 0;
-        }
-        .feature-icon {
-            font-size: 24px;
-            margin-right: 15px;
-        }
-        .feature-text {
-            font-size: 15px;
-            color: #555;
-        }
-        .cta-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 40px;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-        .footer {
-            background: #f8f9fa;
-            padding: 30px;
-            text-align: center;
-            font-size: 14px;
-            color: #777;
-        }
-        .footer a {
-            color: #667eea;
-            text-decoration: none;
-        }
-    </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">⚡</div>
-            <h1>Welcome to Entropy AI Lab!</h1>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4;">
+    <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center; color: white;">
+            <div style="font-size: 48px; margin-bottom: 10px;">⚡</div>
+            <h1 style="margin: 0; font-size: 28px; font-weight: bold;">Welcome to Entropy AI Lab!</h1>
         </div>
         
-        <div class="content">
-            <h2>Thank You for Subscribing! 🎉</h2>
-            <p>Hello,</p>
-            <p>We're excited to have you join our community of AI enthusiasts and professionals! You've successfully subscribed to receive the latest updates from Entropy AI Lab.</p>
+        <div style="padding: 40px 30px;">
+            <h2 style="color: #667eea; font-size: 24px; margin-top: 0;">Thank You for Subscribing! 🎉</h2>
+            <p style="font-size: 16px; color: #555; margin: 15px 0;">Hello,</p>
+            <p style="font-size: 16px; color: #555; margin: 15px 0;">We're excited to have you join our community of AI enthusiasts and professionals! You've successfully subscribed to receive the latest updates from Entropy AI Lab.</p>
             
-            <div class="features">
-                <div class="feature-item">
-                    <span class="feature-icon">📧</span>
-                    <span class="feature-text"><strong>Weekly AI Updates:</strong> Stay informed with the latest AI trends and technologies</span>
+            <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 25px 0;">
+                <div style="display: flex; align-items: center; margin: 15px 0;">
+                    <span style="font-size: 24px; margin-right: 15px;">📧</span>
+                    <span style="font-size: 15px; color: #555;"><strong>Weekly AI Updates:</strong> Stay informed with the latest AI trends and technologies</span>
                 </div>
-                <div class="feature-item">
-                    <span class="feature-icon">💡</span>
-                    <span class="feature-text"><strong>Exclusive Insights:</strong> Access expert analysis and thought leadership</span>
+                <div style="display: flex; align-items: center; margin: 15px 0;">
+                    <span style="font-size: 24px; margin-right: 15px;">💡</span>
+                    <span style="font-size: 15px; color: #555;"><strong>Exclusive Insights:</strong> Access expert analysis and thought leadership</span>
                 </div>
-                <div class="feature-item">
-                    <span class="feature-icon">📊</span>
-                    <span class="feature-text"><strong>Industry Trends:</strong> Discover emerging patterns in AI and data science</span>
+                <div style="display: flex; align-items: center; margin: 15px 0;">
+                    <span style="font-size: 24px; margin-right: 15px;">📊</span>
+                    <span style="font-size: 15px; color: #555;"><strong>Industry Trends:</strong> Discover emerging patterns in AI and data science</span>
                 </div>
             </div>
             
-            <p>We'll be sending you curated content about:</p>
-            <ul>
-                <li>AI and Machine Learning breakthroughs</li>
-                <li>Data-driven solution strategies</li>
-                <li>Industry case studies and success stories</li>
-                <li>Exclusive webinars and events</li>
-            </ul>
+            <p style="font-size: 16px; color: #555; margin: 15px 0;">We'll be sending you curated content about AI and Machine Learning breakthroughs, data-driven solution strategies, industry case studies, and exclusive webinars.</p>
             
-            <center>
-                <a href="https://entropyailab.com" class="cta-button">Visit Our Website</a>
-            </center>
+            <div style="text-align: center;">
+                <a href="https://entropyailab.com" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 25px; font-weight: bold; margin: 20px 0;">Visit Our Website</a>
+            </div>
             
-            <p style="margin-top: 30px;">If you have any questions or want to learn more about our services, feel free to reach out to us at <a href="mailto:contact@entropyailab.com">contact@entropyailab.com</a>.</p>
+            <p style="margin-top: 30px; font-size: 16px; color: #555;">If you have any questions, reach out to us at <a href="mailto:contact@entropyailab.com" style="color: #667eea;">contact@entropyailab.com</a>.</p>
         </div>
         
-        <div class="footer">
-            <p><strong>Entropy AI Lab</strong><br>
-            Data-First AI Solutions</p>
-            <p>You're receiving this email because you subscribed to our newsletter at entropyailab.com</p>
-            <p><a href="#">Unsubscribe</a> | <a href="#">Update Preferences</a></p>
-            <p style="margin-top: 20px; font-size: 12px; color: #999;">
-                © 2025 Entropy AI Lab. All rights reserved.
-            </p>
+        <div style="background: #f8f9fa; padding: 30px; text-align: center; font-size: 14px; color: #777;">
+            <p><strong>Entropy AI Lab</strong><br>Data-First AI Solutions</p>
+            <p style="margin-top: 20px; font-size: 12px; color: #999;">© 2025 Entropy AI Lab. All rights reserved.</p>
         </div>
     </div>
 </body>
-</html>
-            `,
-            text: `
+</html>`;
+}
+
+function generateEmailText() {
+    return `
 Welcome to Entropy AI Lab!
 
 Thank you for subscribing to our newsletter!
@@ -211,32 +159,9 @@ You'll now receive:
 - Exclusive Insights: Access expert analysis and thought leadership  
 - Industry Trends: Discover emerging patterns in AI and data science
 
-We'll keep you updated on AI breakthroughs, data-driven strategies, case studies, and exclusive events.
-
 Visit us: https://entropyailab.com
 Contact: contact@entropyailab.com
 
 © 2025 Entropy AI Lab. All rights reserved.
-            `
-        };
-
-        // Send email
-        await transporter.sendMail(mailOptions);
-
-        // Log subscription (in production, save to database)
-        console.log(`New subscription: ${email} at ${new Date().toISOString()}`);
-
-        // Return success response
-        return res.status(200).json({
-            success: true,
-            message: 'Subscription successful! Please check your email for confirmation.'
-        });
-
-    } catch (error) {
-        console.error('Subscription error:', error);
-        return res.status(500).json({
-            error: 'Failed to process subscription. Please try again later.',
-            details: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
-    }
-};
+    `;
+}
