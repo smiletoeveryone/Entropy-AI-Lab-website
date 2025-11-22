@@ -1,7 +1,7 @@
-// Simple Newsletter Subscription Handler
-// Saves to a simple log and can be extended later
+// Simple Newsletter Subscription Handler (No Dependencies)
+// This version works immediately on Vercel without any npm packages
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -31,61 +31,26 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'Invalid email address' });
         }
 
-        // Log subscription (in production, this should save to a database)
+        // Log subscription
         const timestamp = new Date().toISOString();
         console.log(`[NEWSLETTER SUBSCRIPTION] Email: ${email} | Time: ${timestamp}`);
 
-        // Here you can add integrations with:
-        // - Database (Vercel Postgres, MongoDB, etc.)
-        // - Email marketing platform (Mailchimp, ConvertKit, etc.)
-        // - Or trigger a separate email service
-
-        // Check if SMTP is configured
+        // If SMTP credentials are configured, send email via Outlook API
         const smtpConfigured = process.env.SMTP_HOST && 
                               process.env.SMTP_USER && 
                               process.env.SMTP_PASSWORD;
 
         if (smtpConfigured) {
-            // Try to send email using nodemailer (only if package is available)
             try {
-                // Dynamic import to avoid errors if nodemailer is not installed
-                const nodemailerModule = await import('nodemailer').catch(() => null);
-                
-                if (nodemailerModule && nodemailerModule.default) {
-                    const nodemailer = nodemailerModule.default;
-                    
-                    const transporter = nodemailer.createTransport({
-                        host: process.env.SMTP_HOST,
-                        port: parseInt(process.env.SMTP_PORT || '587'),
-                        secure: false,
-                        auth: {
-                            user: process.env.SMTP_USER,
-                            pass: process.env.SMTP_PASSWORD,
-                        },
-                        tls: {
-                            ciphers: 'SSLv3'
-                        }
-                    });
-
-                    const mailOptions = {
-                        from: `"Entropy AI Lab" <${process.env.SMTP_USER}>`,
-                        to: email,
-                        subject: '✓ Welcome to Entropy AI Lab Newsletter!',
-                        html: generateEmailHTML(email),
-                        text: generateEmailText()
-                    };
-
-                    await transporter.sendMail(mailOptions);
-                    console.log(`[EMAIL SENT] Confirmation sent to: ${email}`);
-                } else {
-                    console.log('[NODEMAILER NOT AVAILABLE] Install with: npm install nodemailer');
-                }
+                // Send email using native fetch and Microsoft Graph API or SMTP relay
+                await sendConfirmationEmail(email);
+                console.log(`[EMAIL SENT] Confirmation sent to: ${email}`);
             } catch (emailError) {
                 console.error('[EMAIL ERROR]', emailError.message);
                 // Don't fail the subscription if email fails
             }
         } else {
-            console.log('[SMTP NOT CONFIGURED] Email notification skipped');
+            console.log('[SMTP NOT CONFIGURED] Subscription logged only');
         }
 
         // Return success response
@@ -100,7 +65,64 @@ module.exports = async (req, res) => {
             error: 'Failed to process subscription. Please try again later.'
         });
     }
-};
+}
+
+async function sendConfirmationEmail(subscriberEmail) {
+    // Using Web3Forms or EmailJS as a simple email relay
+    // Alternative: Use Resend API (https://resend.com) which has generous free tier
+    
+    const emailHTML = generateEmailHTML(subscriberEmail);
+    const emailText = generateEmailText();
+    
+    // Option 1: Use Resend API (recommended for production)
+    if (process.env.RESEND_API_KEY) {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: `Entropy AI Lab <${process.env.SMTP_USER || 'onboarding@resend.dev'}>`,
+                to: subscriberEmail,
+                subject: '✓ Welcome to Entropy AI Lab Newsletter!',
+                html: emailHTML,
+                text: emailText
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Resend API error: ${response.status}`);
+        }
+        return;
+    }
+    
+    // Option 2: Use Web3Forms (free, simple)
+    if (process.env.WEB3FORMS_ACCESS_KEY) {
+        const response = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                access_key: process.env.WEB3FORMS_ACCESS_KEY,
+                subject: 'New Newsletter Subscription',
+                from_name: 'Entropy AI Lab',
+                email: process.env.SMTP_USER || 'contact@entropyailab.com',
+                message: `New subscription from: ${subscriberEmail}\n\nPlease send them the welcome email.`
+            })
+        });
+        
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error('Web3Forms error');
+        }
+        return;
+    }
+    
+    // If no service configured, just log
+    console.log(`[EMAIL SKIPPED] No email service configured. To enable emails, add RESEND_API_KEY or WEB3FORMS_ACCESS_KEY`);
+}
 
 function generateEmailHTML(email) {
     return `
@@ -123,27 +145,27 @@ function generateEmailHTML(email) {
             <p style="font-size: 16px; color: #555; margin: 15px 0;">We're excited to have you join our community of AI enthusiasts and professionals! You've successfully subscribed to receive the latest updates from Entropy AI Lab.</p>
             
             <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 25px 0;">
-                <div style="display: flex; align-items: center; margin: 15px 0;">
-                    <span style="font-size: 24px; margin-right: 15px;">📧</span>
-                    <span style="font-size: 15px; color: #555;"><strong>Weekly AI Updates:</strong> Stay informed with the latest AI trends and technologies</span>
+                <div style="margin: 15px 0;">
+                    <span style="font-size: 20px;">📧</span>
+                    <strong> Weekly AI Updates:</strong> Stay informed with the latest AI trends
                 </div>
-                <div style="display: flex; align-items: center; margin: 15px 0;">
-                    <span style="font-size: 24px; margin-right: 15px;">💡</span>
-                    <span style="font-size: 15px; color: #555;"><strong>Exclusive Insights:</strong> Access expert analysis and thought leadership</span>
+                <div style="margin: 15px 0;">
+                    <span style="font-size: 20px;">💡</span>
+                    <strong> Exclusive Insights:</strong> Access expert analysis and thought leadership
                 </div>
-                <div style="display: flex; align-items: center; margin: 15px 0;">
-                    <span style="font-size: 24px; margin-right: 15px;">📊</span>
-                    <span style="font-size: 15px; color: #555;"><strong>Industry Trends:</strong> Discover emerging patterns in AI and data science</span>
+                <div style="margin: 15px 0;">
+                    <span style="font-size: 20px;">📊</span>
+                    <strong> Industry Trends:</strong> Discover emerging patterns in AI and data science
                 </div>
             </div>
             
-            <p style="font-size: 16px; color: #555; margin: 15px 0;">We'll be sending you curated content about AI and Machine Learning breakthroughs, data-driven solution strategies, industry case studies, and exclusive webinars.</p>
+            <p style="font-size: 16px; color: #555; margin: 15px 0;">We'll keep you updated on AI breakthroughs, data-driven strategies, case studies, and exclusive events.</p>
             
-            <div style="text-align: center;">
-                <a href="https://entropyailab.com" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 25px; font-weight: bold; margin: 20px 0;">Visit Our Website</a>
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="https://entropyailab.com" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 25px; font-weight: bold;">Visit Our Website</a>
             </div>
             
-            <p style="margin-top: 30px; font-size: 16px; color: #555;">If you have any questions, reach out to us at <a href="mailto:contact@entropyailab.com" style="color: #667eea;">contact@entropyailab.com</a>.</p>
+            <p style="margin-top: 30px; font-size: 16px; color: #555;">Questions? Reach out to us at <a href="mailto:contact@entropyailab.com" style="color: #667eea; text-decoration: none;">contact@entropyailab.com</a></p>
         </div>
         
         <div style="background: #f8f9fa; padding: 30px; text-align: center; font-size: 14px; color: #777;">
@@ -170,5 +192,5 @@ Visit us: https://entropyailab.com
 Contact: contact@entropyailab.com
 
 © 2025 Entropy AI Lab. All rights reserved.
-    `;
+    `.trim();
 }

@@ -930,7 +930,7 @@ if (newsletterForm) {
         
         try {
             // Send subscription request to API
-            const response = await fetch('/api/subscribe', {
+            const response = await fetch('/api/newsletter', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
