@@ -900,3 +900,75 @@ function animateCounter(element, target, duration = 2000) {
     }, 16);
 }
 
+// ===============================================
+// NEWSLETTER FORM HANDLING
+// ===============================================
+
+const newsletterForm = document.getElementById('newsletterForm');
+const formMessage = document.getElementById('formMessage');
+
+if (newsletterForm) {
+    newsletterForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const emailInput = this.querySelector('.email-input');
+        const email = emailInput.value.trim();
+        
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (!emailRegex.test(email)) {
+            showFormMessage('Please enter a valid email address', 'error');
+            return;
+        }
+        
+        // Disable button and show loading state
+        const submitBtn = this.querySelector('.subscribe-btn');
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Subscribing...</span>';
+        
+        // Simulate form submission (replace with actual backend call)
+        setTimeout(() => {
+            // Success simulation
+            showFormMessage('✓ Successfully subscribed! Check your email for confirmation.', 'success');
+            emailInput.value = '';
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+            
+            // Optional: Send to actual backend
+            // fetch('/api/subscribe', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ email })
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     showFormMessage('✓ Successfully subscribed!', 'success');
+            //     emailInput.value = '';
+            // })
+            // .catch(error => {
+            //     showFormMessage('× Subscription failed. Please try again.', 'error');
+            // })
+            // .finally(() => {
+            //     submitBtn.disabled = false;
+            //     submitBtn.innerHTML = originalBtnText;
+            // });
+            
+        }, 1500);
+    });
+}
+
+function showFormMessage(message, type) {
+    formMessage.textContent = message;
+    formMessage.className = `form-message ${type}`;
+    
+    // Auto-hide success messages after 5 seconds
+    if (type === 'success') {
+        setTimeout(() => {
+            formMessage.textContent = '';
+            formMessage.className = 'form-message';
+        }, 5000);
+    }
+}
+
