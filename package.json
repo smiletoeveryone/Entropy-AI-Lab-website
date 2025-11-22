@@ -4,8 +4,7 @@
   "description": "Entropy AI Lab - Data-First AI Solutions",
   "main": "index.html",
   "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel --prod"
+    "start": "vercel dev"
   },
   "keywords": ["ai", "machine-learning", "data-science"],
   "author": "Entropy AI Lab",
