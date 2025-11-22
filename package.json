@@ -1,0 +1,16 @@
+{
+  "name": "entropy-ai-lab-website",
+  "version": "1.0.0",
+  "description": "Entropy AI Lab - Data-First AI Solutions",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "keywords": ["ai", "machine-learning", "data-science"],
+  "author": "Entropy AI Lab",
+  "license": "MIT",
+  "dependencies": {
+    "nodemailer": "^6.9.7"
+  }
+}

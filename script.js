@@ -908,7 +908,7 @@ const newsletterForm = document.getElementById('newsletterForm');
 const formMessage = document.getElementById('formMessage');
 
 if (newsletterForm) {
-    newsletterForm.addEventListener('submit', function(e) {
+    newsletterForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const emailInput = this.querySelector('.email-input');
@@ -928,34 +928,39 @@ if (newsletterForm) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span>Subscribing...</span>';
         
-        // Simulate form submission (replace with actual backend call)
-        setTimeout(() => {
-            // Success simulation
-            showFormMessage('✓ Successfully subscribed! Check your email for confirmation.', 'success');
-            emailInput.value = '';
+        try {
+            // Send subscription request to API
+            const response = await fetch('/api/subscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                showFormMessage('✓ Successfully subscribed! Check your email for confirmation.', 'success');
+                emailInput.value = '';
+                
+                // Optional: Track conversion with analytics
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'newsletter_subscription', {
+                        'event_category': 'engagement',
+                        'event_label': 'newsletter'
+                    });
+                }
+            } else {
+                showFormMessage(data.error || '× Subscription failed. Please try again.', 'error');
+            }
+        } catch (error) {
+            console.error('Subscription error:', error);
+            showFormMessage('× Connection error. Please check your internet and try again.', 'error');
+        } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalBtnText;
-            
-            // Optional: Send to actual backend
-            // fetch('/api/subscribe', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ email })
-            // })
-            // .then(response => response.json())
-            // .then(data => {
-            //     showFormMessage('✓ Successfully subscribed!', 'success');
-            //     emailInput.value = '';
-            // })
-            // .catch(error => {
-            //     showFormMessage('× Subscription failed. Please try again.', 'error');
-            // })
-            // .finally(() => {
-            //     submitBtn.disabled = false;
-            //     submitBtn.innerHTML = originalBtnText;
-            // });
-            
-        }, 1500);
+        }
     });
 }
 
