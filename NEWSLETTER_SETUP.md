@@ -24,7 +24,48 @@ This installs `nodemailer` for email sending functionality.
 
 You have several options for sending emails:
 
-#### Option A: Gmail (Recommended for Testing)
+#### Option A: Hotmail/Outlook.com (Recommended for Personal Email)
+
+1. **Use your Hotmail/Outlook.com account:**
+   - Email: your-email@hotmail.com or @outlook.com
+   - Password: Your regular email password
+
+2. **If you have 2-Factor Authentication enabled:**
+   - Go to https://account.microsoft.com/security
+   - Select "Advanced security options"
+   - Under "App passwords", create a new app password
+   - Use this app password instead of your regular password
+
+3. **Use these settings:**
+   ```
+   SMTP_HOST=smtp-mail.outlook.com
+   SMTP_PORT=587
+   SMTP_USER=your-email@hotmail.com (or @outlook.com)
+   SMTP_PASSWORD=your-password-or-app-password
+   ```
+
+4. **Important Notes:**
+   - Hotmail has sending limits (approximately 300 emails/day for free accounts)
+   - Make sure "Less secure apps" is not blocking access
+   - If emails fail, check your Microsoft account security settings
+
+#### Option B: Office 365 / Microsoft 365 (For Custom Domains)
+
+If contact@entropyailab.com is hosted on Microsoft 365:
+
+1. **Use these settings:**
+   ```
+   SMTP_HOST=smtp.office365.com
+   SMTP_PORT=587
+   SMTP_USER=contact@entropyailab.com
+   SMTP_PASSWORD=your-email-password
+   ```
+
+2. **With 2FA enabled:**
+   - Create an App Password at https://account.microsoft.com/security
+   - Use the App Password instead of your regular password
+
+#### Option C: Gmail (Alternative Option)
 
 1. **Enable 2-Factor Authentication** on your Gmail account
 2. **Generate App Password:**
